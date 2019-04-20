@@ -10,9 +10,7 @@ import {Component, OnInit} from '@angular/core';
 
 export class AppComponent implements OnInit {
 
-  constructor(
-    public web3Service: Web3Service
-  ) {
+  constructor() {
 
   }
 
