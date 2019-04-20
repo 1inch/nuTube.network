@@ -48,11 +48,7 @@ jobs:
               git rm -rf .
               cd ..
 
-              cd web
-
               yarn run build
-
-              cd ..
 
               cp -a web/dist/web/. out/.
 
