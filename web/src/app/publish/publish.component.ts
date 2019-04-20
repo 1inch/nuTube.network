@@ -3,7 +3,6 @@ import {NavigationService} from '../base/navigation.service';
 import Peer from 'peerjs';
 
 declare const navigator: any;
-declare const window: any;
 
 @Component({
     selector: 'app-publish',
@@ -34,6 +33,8 @@ export class PublishComponent implements OnInit {
 
     publish() {
 
+        console.log('Peer', Peer);
+
         // const id = Math.random().toString(36).substr(2, 9);
         const id = '0xf7FB07E46a54A0878105C6271B753948E715a962';
 
@@ -42,7 +43,7 @@ export class PublishComponent implements OnInit {
             config: {
                 'iceServers': [
                     {
-                        url: 'stun:stun1.l.google.com:19302'
+                        urls: ['stun:stun1.l.google.com:19302']
                     }
                 ]
             }

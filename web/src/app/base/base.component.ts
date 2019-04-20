@@ -17,7 +17,7 @@ export class BaseComponent implements OnInit {
 
   constructor(
     private location: Location,
-    private navigationService: NavigationService,
+    public navigationService: NavigationService,
     private route: ActivatedRoute,
     private router: Router,
     private web3Service: Web3Service
