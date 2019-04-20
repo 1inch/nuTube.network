@@ -1,12 +1,10 @@
 import {Web3Service} from './utils/web3.service';
 
 declare let require: any;
-declare let web3: any;
 import {Component, OnInit} from '@angular/core';
 
 const etherlime = require('etherlime');
-const ethers = require('ethers');
-const ToDo = require('../../../build/ToDoManager.json');
+const ToDo = require('./ContractABI.json');
 const Config = require('../../../config.json');
 
 
