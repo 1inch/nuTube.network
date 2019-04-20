@@ -1,0 +1,20 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+  <button (click)="goBack()" [hidden]="!navigationService.showBackButton"
+          class="btn btn-link my-2 my-sm-0 text-dark" type="submit">
+    <fa-icon [icon]="backIcon" style="font-size: 30px;"></fa-icon>
+  </button>
+
+  <div class="ml-auto" style="display: flex!important;flex-basis: auto;">
+    <a routerLink="/" class="navbar-brand">
+      <img alt="nᴎTube.network" height="50" src="assets/loading-spinner.svg"> ɴᴎ<strong>tube</strong>.network
+    </a>
+  </div>
+
+  <button routerLink="/publish"
+          class="btn btn-link my-2 my-sm-0 text-danger ml-auto" type="submit">
+    <fa-icon [icon]="publishIcon" style="font-size: 30px;"></fa-icon>
+  </button>
+</nav>
+
+<router-outlet></router-outlet>

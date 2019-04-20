@@ -1,0 +1,23 @@
+.card-img-top {
+  object-fit: cover;
+  height: 253px;
+}
+
+.card {
+  min-height: 25rem;
+  cursor: pointer;
+}
+
+.text-blink {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  25% {
+    opacity: 0;
+  }
+}
+
+.card-title {
+  min-height: 3rem;
+}

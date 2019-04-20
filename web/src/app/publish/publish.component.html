@@ -1,0 +1,43 @@
+<div class="container mt-4">
+    <h4>Start new live stream now:</h4>
+
+    <hr>
+
+    <div class="row justify-content-md-center">
+
+        <div class="col-sm-6">
+
+            <video #videoPlayer [hidden]="!publishing" controls height="420" width="100%">
+                Your browser does not support the video tag.
+            </video>
+
+            <hr [hidden]="!publishing">
+
+            <form>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label" for="maxConnections">Max. connections</label>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="maxConnections" name="maxConnections">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="250">250</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <button (click)="publish()" [hidden]="publishing" class="btn btn-danger btn-lg" style="margin: 0 auto;"
+                            type="button">Start
+                    </button>
+                    <button (click)="stop()" [hidden]="!publishing" class="btn btn-dark btn-lg" style="margin: 0 auto;"
+                            type="button">Stop
+                    </button>
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+</div>
