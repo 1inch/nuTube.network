@@ -1,6 +1,7 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {NavigationService} from '../base/navigation.service';
 import Peer from 'peerjs';
+import {ActivatedRoute} from '@angular/router';
 
 declare const navigator: any;
 
@@ -15,9 +16,12 @@ export class PublishComponent implements OnInit {
     stream: MediaStream;
     videoPlayer: HTMLVideoElement;
     peer: Peer;
+    id;
+    connections = 0;
 
     constructor(
-        public navigationService: NavigationService
+        public navigationService: NavigationService,
+        private route: ActivatedRoute
     ) {
     }
 
@@ -29,12 +33,13 @@ export class PublishComponent implements OnInit {
     ngOnInit() {
 
         this.navigationService.showBackButton = true;
+        this.id = this.route.snapshot.paramMap.get('id');
     }
 
     publish() {
 
         // const id = Math.random().toString(36).substr(2, 9);
-        const id = 'NUTUBE_NETWORK_1234567';
+        const id = 'NUTUBE_NETWORK_' + (this.id ? this.id :  Math.random().toString(36).substr(2, 9));
 
         this.peer = new Peer(id);
 
@@ -60,21 +65,30 @@ export class PublishComponent implements OnInit {
             console.log('Income call', call);
             console.log('Stream', this.stream);
 
-            call.answer(this.stream);
+            this.connections++;
 
-            call.on('stream', (remoteStream) => {
-                console.log('remoteStream', remoteStream);
-            });
+            if (this.connections < 5) {
 
-            call.on('error', (err) => {
-                console.log('Error', err);
-            });
+                call.answer(this.stream);
 
-            // Handle when the call finishes
-            call.on('close', () => {
+                call.on('stream', (remoteStream) => {
+                    console.log('remoteStream', remoteStream);
+                });
 
-                console.log('The videocall has finished');
-            });
+                call.on('error', (err) => {
+                    console.log('Error', err);
+                });
+
+                // Handle when the call finishes
+                call.on('close', () => {
+
+                    console.log('The videocall has finished');
+                    this.connections--;
+                });
+            } else {
+
+                console.log('To many connections. Call declined!', this.connections);
+            }
 
             // use call.close() to finish a call
         });

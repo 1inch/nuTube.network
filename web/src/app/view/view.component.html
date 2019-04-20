@@ -2,7 +2,8 @@
     <h4><span class="badge badge-danger text-blink">LIVE!</span> Music Concert - Anastagia</h4>
     <hr>
 
-    <video #videoPlayer [hidden]="!receiving" controls height="420" width="100%">
+    <app-loading-spinner [hidden]="receiving && !loading"></app-loading-spinner>
+    <video #videoPlayer [hidden]="!receiving && loading" controls height="420" width="100%">
         Your browser does not support the video tag.
     </video>
 </div>

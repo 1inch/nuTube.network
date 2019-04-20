@@ -17,6 +17,10 @@ const routes: Routes = [
                 loadChildren: './publish/publish.module#PublishModule'
             },
             {
+                path: 'publish/:id',
+                loadChildren: './publish/publish.module#PublishModule'
+            },
+            {
                 path: 'v/:id',
                 loadChildren: './view/view.module#ViewModule'
             }

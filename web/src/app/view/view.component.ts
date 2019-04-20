@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {NavigationService} from '../base/navigation.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import Peer from 'peerjs';
 
 declare const window: any;
@@ -39,6 +39,7 @@ export const createEmptyVideoTrack = ({width, height}) => {
 })
 export class ViewComponent implements OnInit {
 
+    loading = false;
     receiving = false;
     videoPlayer: HTMLVideoElement;
     id;
@@ -47,8 +48,7 @@ export class ViewComponent implements OnInit {
 
     constructor(
         public navigationService: NavigationService,
-        private route: ActivatedRoute,
-        private router: Router
+        private route: ActivatedRoute
     ) {
     }
 
@@ -67,25 +67,22 @@ export class ViewComponent implements OnInit {
 
     connect() {
 
+        this.loading = true;
+
         this.peer = new Peer();
 
         this.peer.on('open', () => {
             console.log('PeerID:', this.peer.id);
         });
 
-        this.peer.on('connection', function (connection) {
-
-            connection.on('data', (data) => {
-
-                console.log('Data from connection', data);
-            });
-        });
-
         this.peer.on('error', (err) => {
 
+            this.loading = true;
+            alert(err);
             console.error(err);
-        });
 
+            setTimeout(this.connect, 1000);
+        });
 
         const audioTrack = createEmptyAudioTrack();
         const videoTrack = createEmptyVideoTrack({width: 1280, height: 720});
@@ -103,11 +100,17 @@ export class ViewComponent implements OnInit {
             this.videoPlayer.srcObject = remoteStream;
             this.videoPlayer.play();
             this.remoteStream = remoteStream;
+
+            this.loading = false;
         });
 
         call.on('error', (err) => {
 
+            this.loading = true;
+            alert(err);
             console.log('Error', err);
+
+            setTimeout(this.connect, 1000);
         });
     }
 }
