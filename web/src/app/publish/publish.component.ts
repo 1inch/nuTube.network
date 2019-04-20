@@ -44,15 +44,7 @@ export class PublishComponent implements OnInit {
         this.peer = new Peer(id);
 
         this.peer.on('open', () => {
-            console.log('PeerID:', this.peer.id);
-        });
-
-        this.peer.on('connection', function (connection) {
-
-            connection.on('data', (data) => {
-
-                console.log('Data from connection', data);
-            });
+            // console.log('PeerID:', this.peer.id);
         });
 
         this.peer.on('error', (err) => {
@@ -62,8 +54,9 @@ export class PublishComponent implements OnInit {
 
         this.peer.on('call', (call) => {
 
-            console.log('Income call', call);
-            console.log('Stream', this.stream);
+            // console.log('Income call', call);
+            // console.log('Stream', this.stream);
+            console.log('New connection', this.connections);
 
             this.connections++;
 
@@ -72,7 +65,7 @@ export class PublishComponent implements OnInit {
                 call.answer(this.stream);
 
                 call.on('stream', (remoteStream) => {
-                    console.log('remoteStream', remoteStream);
+                    // console.log('remoteStream', remoteStream);
                 });
 
                 call.on('error', (err) => {
@@ -82,7 +75,7 @@ export class PublishComponent implements OnInit {
                 // Handle when the call finishes
                 call.on('close', () => {
 
-                    console.log('The videocall has finished');
+                    console.log('The videocall has finished', this.connections);
                     this.connections--;
                 });
             } else {
