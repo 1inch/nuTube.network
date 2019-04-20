@@ -50,7 +50,7 @@ jobs:
 
               cd web
 
-              ng build
+              yarn run build
 
               cd ..
 
