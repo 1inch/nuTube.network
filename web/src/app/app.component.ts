@@ -1,3 +1,5 @@
+import {Web3Service} from './utils/web3.service';
+
 declare let require: any;
 declare let web3: any;
 import {Component, OnInit} from '@angular/core';
@@ -26,17 +28,21 @@ export class AppComponent implements OnInit {
     toDo: [],
     inProgress: [],
     done: []
-  }
+  };
   public inactiveButton;
 
-  constructor() {
+  constructor(public web3Service: Web3Service) {
 
   }
 
   async ngOnInit() {
     try {
       console.log(this.contractAddress);
-      const provider = new ethers.providers.Web3Provider(web3.currentProvider);
+
+      const provider = this.web3Service.provider;
+
+      console.log(provider);
+
       const signer = await provider.getSigner();
       this.contractInstance = await etherlime.ContractAt(ToDo, this.contractAddress, signer, provider);
       this.successMessage = 'The contract has been set and is ready to interact with it!';
@@ -112,17 +118,17 @@ export class AppComponent implements OnInit {
   }
 
   private async getToDoStatuses() {
-    let statuses = {
+    const statuses = {
       toDo: [],
       inProgress: [],
       done: []
-    }
+    };
 
     try {
       let indexCounter = await this.contractInstance.indexCounter();
       let index = indexCounter.toNumber();
       for (let i = 0; i < index; i++) {
-        let toDo = await this.contractInstance.getToDoByIndex(i)
+        let toDo = await this.contractInstance.getToDoByIndex(i);
         let status = await this.contractInstance.getToDoStatus(i);
         if (status === 1) {
           statuses.toDo.push(toDo);
