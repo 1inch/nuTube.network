@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "ng": "ng",
-    "start": "cd web && ng serve",
+    "start": "cd web && ng serve --aot",
     "build": "cd web && ng build --prod --build-optimizer",
     "test": "ng test",
     "lint": "ng lint",

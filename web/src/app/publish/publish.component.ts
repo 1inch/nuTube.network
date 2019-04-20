@@ -33,21 +33,10 @@ export class PublishComponent implements OnInit {
 
     publish() {
 
-        console.log('Peer', Peer);
-
         // const id = Math.random().toString(36).substr(2, 9);
-        const id = '0xf7FB07E46a54A0878105C6271B753948E715a962';
+        const id = 'NUTUBE_NETWORK_1234567';
 
-        this.peer = new Peer(id, {
-            debug: 3,
-            config: {
-                'iceServers': [
-                    {
-                        urls: ['stun:stun1.l.google.com:19302']
-                    }
-                ]
-            }
-        });
+        this.peer = new Peer(id);
 
         this.peer.on('open', () => {
             console.log('PeerID:', this.peer.id);
@@ -69,12 +58,20 @@ export class PublishComponent implements OnInit {
         this.peer.on('call', (call) => {
 
             console.log('Income call', call);
+            console.log('Stream', this.stream);
 
-            // Answer the call with your own video/audio stream
             call.answer(this.stream);
 
+            call.on('stream', (remoteStream) => {
+                console.log('remoteStream', remoteStream);
+            });
+
+            call.on('error', (err) => {
+                console.log('Error', err);
+            });
+
             // Handle when the call finishes
-            call.on('close', function () {
+            call.on('close', () => {
 
                 console.log('The videocall has finished');
             });
@@ -83,7 +80,14 @@ export class PublishComponent implements OnInit {
         });
 
         navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-        navigator.getUserMedia({video: true, audio: true}, (stream) => {
+        navigator.getUserMedia({
+            video: {
+                width: {min: 1024, ideal: 1280, max: 1920},
+                height: {min: 576, ideal: 720, max: 1080},
+                facingMode: 'user'
+            },
+            audio: true
+        }, (stream) => {
 
             this.publishing = true;
 
