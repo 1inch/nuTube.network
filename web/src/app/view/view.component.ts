@@ -81,7 +81,7 @@ export class ViewComponent implements OnInit {
             alert(err);
             console.error(err);
 
-            setTimeout(this.connect, 1000);
+            window.location.reload();
         });
 
         const audioTrack = createEmptyAudioTrack();
@@ -110,7 +110,7 @@ export class ViewComponent implements OnInit {
             alert(err);
             console.log('Error', err);
 
-            setTimeout(this.connect, 1000);
+            window.location.reload();
         });
     }
 }
