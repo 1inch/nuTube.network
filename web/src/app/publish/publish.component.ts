@@ -39,7 +39,7 @@ export class PublishComponent implements OnInit {
     publish() {
 
         // const id = Math.random().toString(36).substr(2, 9);
-        const id = 'NUTUBE_NETWORK_' + (this.id ? this.id :  Math.random().toString(36).substr(2, 9));
+        const id = 'NUTUBE_NETWORK_' + (this.id ? this.id : Math.random().toString(36).substr(2, 9));
 
         this.peer = new Peer(id);
 
@@ -56,9 +56,10 @@ export class PublishComponent implements OnInit {
 
             // console.log('Income call', call);
             // console.log('Stream', this.stream);
-            console.log('New connection', this.connections);
 
             this.connections++;
+
+            console.log('New connection', this.connections);
 
             if (this.connections < 30) {
 
@@ -75,8 +76,8 @@ export class PublishComponent implements OnInit {
                 // Handle when the call finishes
                 call.on('close', () => {
 
-                    console.log('The videocall has finished', this.connections);
                     this.connections--;
+                    console.log('The videocall has finished', this.connections);
                 });
             } else {
 
