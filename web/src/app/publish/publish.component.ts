@@ -4,6 +4,9 @@ import Peer from 'peerjs';
 import {ActivatedRoute} from '@angular/router';
 
 declare const navigator: any;
+declare const require: any;
+
+const getStats = require('getstats');
 
 @Component({
     selector: 'app-publish',
@@ -18,6 +21,7 @@ export class PublishComponent implements OnInit {
     peer: Peer;
     id;
     connections = 0;
+    bytesSend = [];
 
     constructor(
         public navigationService: NavigationService,
@@ -52,9 +56,24 @@ export class PublishComponent implements OnInit {
             console.error(err);
         });
 
+        this.peer.on('open', () => {
+            console.log('PeerID:', this.peer.id);
+        });
+
+        this.peer.on('connection', function (connection) {
+
+            console.log('connection', connection);
+
+            connection.on('data', (data) => {
+
+                console.log('Data from connection', data);
+            });
+
+        });
+
         this.peer.on('call', (call) => {
 
-            // console.log('Income call', call);
+            console.log('Income call', call);
             // console.log('Stream', this.stream);
 
             this.connections++;
@@ -79,6 +98,8 @@ export class PublishComponent implements OnInit {
                     this.connections--;
                     console.log('The videocall has finished', this.connections);
                 });
+
+                this.initStatus(call.peer, call.peerConnection);
             } else {
 
                 console.log('To many connections. Call declined!', this.connections);
@@ -115,5 +136,46 @@ export class PublishComponent implements OnInit {
         this.stream.getTracks().map((val) => {
             val.stop();
         });
+    }
+
+    initStatus(user, peerConnection) {
+
+        const repeatInterval = 2000; // 2000 ms == 2 seconds
+
+        // console.log('Peer', peerConnection);
+
+        getStats(peerConnection, (result) => {
+
+            // console.log('remote.ipAddress', result.connectionType.remote.ipAddress);
+            // console.log('remote.candidateType', result.connectionType.remote.candidateType);
+            // console.log('connectionType.transport', result.connectionType.transport);
+            //
+            // console.log('bandwidth.speed', result.bandwidth.speed); // bandwidth download speed (bytes per second)
+            // console.log('bytesSent', result.video.bytesSent); // bandwidth download speed (bytes per second)
+            //
+            this.bytesSend[user] = result.video.bytesSent;
+
+            console.log('User: ' + user + ' => ' + result.video.bytesSent);
+
+            // to access native "results" array
+            // result.results.forEach(function (item) {
+            //
+            //     console.log('item', item);
+            //
+            //     if (item.type === 'ssrc' && item.transportId === 'Channel-audio-1') {
+            //         const packetsLost = item.packetsLost;
+            //         const packetsSent = item.packetsSent;
+            //         const audioInputLevel = item.audioInputLevel;
+            //         const trackId = item.googTrackId; // media stream track id
+            //         const isAudio = item.mediaType === 'audio'; // audio or video
+            //         const isSending = item.id.indexOf('_send') !== -1; // sender or receiver
+            //
+            //         console.log('SendRecv type', item.id.split('_send').pop());
+            //         console.log('MediaStream track type', item.mediaType);
+            //
+            //         console.log('packetsSent', packetsSent);
+            //     }
+            // });
+        }, repeatInterval);
     }
 }

@@ -1,0 +1,28 @@
+version: "3"
+services:
+  sergej:
+    image: raidennetwork/raiden:latest
+    ports:
+      - "5001:5001"
+    entrypoint: "/opt/venv/bin/python3 -m raiden --gas-price fast --accept-disclaimer --eth-rpc-endpoint https://mainnet.infura.io/v3/103ece2065604a8fac1f53500ce07a7f --address 0x07DCFC1e9806AEc1983D58e09EC41cb63f51deCD --api-address http://0.0.0.0:5001 --keystore-path /.ethereum/keystore/ --password-file /home/password.txt --rpc --web-ui"
+    volumes:
+      - ./password:/home/password.txt
+      - ./keys/UTC--2019-04-20T20-49-09Z--232ed419-1b06-df40-39e2-cc93973a8012:/.ethereum/keystore/UTC--2019-04-20T20-49-09Z--232ed419-1b06-df40-39e2-cc93973a8012
+    networks:
+      raidendemo:
+        aliases:
+          - sergej
+  anton:
+    image: raidennetwork/raiden:latest
+    ports:
+      - "5002:5001"
+    entrypoint: "/opt/venv/bin/python3 -m raiden --gas-price fast --accept-disclaimer --eth-rpc-endpoint https://mainnet.infura.io/v3/103ece2065604a8fac1f53500ce07a7f --address 0x00F0F570Eb2F7f332FB7902AeEF5BE6aA1a1A3B4 --api-address http://0.0.0.0:5001 --keystore-path /.ethereum/keystore/ --password-file /home/password.txt --rpc --web-ui"
+    volumes:
+      - ./password:/home/password.txt
+      - ./keys/UTC--2019-04-20T20-49-18Z--0661ab23-3cbd-c696-15ec-94c982ec55e9:/.ethereum/keystore/UTC--2019-04-20T20-49-18Z--0661ab23-3cbd-c696-15ec-94c982ec55e9
+    networks:
+      raidendemo:
+        aliases:
+          - anton
+networks:
+  raidendemo:
