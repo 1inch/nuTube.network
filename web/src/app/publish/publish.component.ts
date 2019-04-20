@@ -67,7 +67,7 @@ export class PublishComponent implements OnInit {
 
             this.connections++;
 
-            if (this.connections < 5) {
+            if (this.connections < 30) {
 
                 call.answer(this.stream);
 
