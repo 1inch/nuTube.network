@@ -2,6 +2,8 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {NavigationService} from '../base/navigation.service';
 import {ActivatedRoute} from '@angular/router';
 import Peer from 'peerjs';
+import {Web3Service} from '../utils/web3.service';
+import {RaidenService} from '../utils/raiden.service';
 
 declare const window: any;
 
@@ -46,9 +48,13 @@ export class ViewComponent implements OnInit {
     peer;
     remoteStream;
 
+    tokenAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
+
     constructor(
         public navigationService: NavigationService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private web3Service: Web3Service,
+        private raidenService: RaidenService
     ) {
     }
 
@@ -65,9 +71,29 @@ export class ViewComponent implements OnInit {
         this.connect();
     }
 
-    connect() {
+    async connect() {
 
         this.loading = true;
+
+        const signedMessage = await this.web3Service.signMessage(this.id);
+
+        try {
+
+            const createResult = await this.raidenService.createChannel(
+                this.tokenAddress,
+                this.id,
+                1
+            );
+
+            console.log('createResult', createResult);
+        } catch (e) {
+
+            console.log(e);
+
+            if (e.status !== 409 && this.id !== 'maniacs') {
+                return;
+            }
+        }
 
         this.peer = new Peer();
 
@@ -88,7 +114,9 @@ export class ViewComponent implements OnInit {
         const videoTrack = createEmptyVideoTrack({width: 1280, height: 720});
         const mediaStream = new MediaStream([audioTrack, videoTrack]);
 
-        const call = this.peer.call('NUTUBE_NETWORK_' + this.id, mediaStream);
+        const call = this.peer.call('NUTUBE_NETWORK_' + this.id, mediaStream, {
+            metadata: signedMessage
+        });
 
         console.log('call', call);
 

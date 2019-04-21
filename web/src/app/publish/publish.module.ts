@@ -6,13 +6,13 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {PublishRoutingModule} from './publish-routing.module';
 
 @NgModule({
-  declarations: [PublishComponent],
-  imports: [
-    CommonModule,
-    FormsModule,
-    FontAwesomeModule,
-    PublishRoutingModule
-  ]
+    declarations: [PublishComponent],
+    imports: [
+        CommonModule,
+        FormsModule,
+        FontAwesomeModule,
+        PublishRoutingModule
+    ]
 })
 export class PublishModule {
 }

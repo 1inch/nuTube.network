@@ -2,6 +2,8 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {NavigationService} from '../base/navigation.service';
 import Peer from 'peerjs';
 import {ActivatedRoute} from '@angular/router';
+import {Web3Service} from '../utils/web3.service';
+import {RaidenService} from '../utils/raiden.service';
 
 declare const navigator: any;
 declare const require: any;
@@ -21,11 +23,17 @@ export class PublishComponent implements OnInit {
     peer: Peer;
     id;
     connections = 0;
+    maxConnections = 25;
     bytesSend = [];
+    users = [];
+
+    tokenAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
 
     constructor(
         public navigationService: NavigationService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private web3Service: Web3Service,
+        private raidenService: RaidenService
     ) {
     }
 
@@ -34,16 +42,20 @@ export class PublishComponent implements OnInit {
         this.videoPlayer = el.nativeElement;
     }
 
-    ngOnInit() {
+    async ngOnInit() {
 
         this.navigationService.showBackButton = true;
         this.id = this.route.snapshot.paramMap.get('id');
+
+        if (!this.id) {
+            this.id = await this.web3Service.provider.getSigner(0).getAddress();
+        }
     }
 
-    publish() {
+    async publish() {
 
         // const id = Math.random().toString(36).substr(2, 9);
-        const id = 'NUTUBE_NETWORK_' + (this.id ? this.id : Math.random().toString(36).substr(2, 9));
+        const id = 'NUTUBE_NETWORK_' + this.id;
 
         this.peer = new Peer(id);
 
@@ -71,7 +83,7 @@ export class PublishComponent implements OnInit {
 
         });
 
-        this.peer.on('call', (call) => {
+        this.peer.on('call', async (call) => {
 
             console.log('Income call', call);
             // console.log('Stream', this.stream);
@@ -80,26 +92,9 @@ export class PublishComponent implements OnInit {
 
             console.log('New connection', this.connections);
 
-            if (this.connections < 30) {
+            if (this.connections < this.maxConnections) {
 
-                call.answer(this.stream);
-
-                call.on('stream', (remoteStream) => {
-                    // console.log('remoteStream', remoteStream);
-                });
-
-                call.on('error', (err) => {
-                    console.log('Error', err);
-                });
-
-                // Handle when the call finishes
-                call.on('close', () => {
-
-                    this.connections--;
-                    console.log('The videocall has finished', this.connections);
-                });
-
-                this.initStatus(call.peer, call.peerConnection);
+                this.handleCall(call);
             } else {
 
                 console.log('To many connections. Call declined!', this.connections);
@@ -177,5 +172,49 @@ export class PublishComponent implements OnInit {
             //     }
             // });
         }, repeatInterval);
+    }
+
+    async handleCall(call) {
+
+        this.users[call.peer] = this.web3Service.messageRecover(this.id, call.metadata);
+        console.log('Address', this.users[call.peer]);
+
+        try {
+
+            if (this.id !== 'maniacs') {
+
+                const channels = await this.raidenService.getChannels(
+                    this.tokenAddress,
+                    this.users[call.peer]
+                );
+
+                console.log('channels', channels);
+            }
+
+            call.answer(this.stream);
+
+            call.on('stream', (remoteStream) => {
+                // console.log('remoteStream', remoteStream);
+            });
+
+            call.on('error', (err) => {
+                console.log('Error', err);
+
+                this.connections--;
+            });
+
+            // Handle when the call finishes
+            call.on('close', () => {
+
+                this.connections--;
+                console.log('The videocall has finished', this.connections);
+            });
+
+            this.initStatus(call.peer, call.peerConnection);
+        } catch (e) {
+
+            console.log('Error', e);
+            call.close();
+        }
     }
 }
