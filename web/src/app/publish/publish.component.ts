@@ -176,8 +176,14 @@ export class PublishComponent implements OnInit {
 
     async handleCall(call) {
 
-        this.users[call.peer] = this.web3Service.messageRecover(this.id, call.metadata);
-        console.log('Address', this.users[call.peer]);
+        try {
+            if (this.id !== 'maniacs') {
+                this.users[call.peer] = this.web3Service.messageRecover(this.id, call.metadata);
+                console.log('Address', this.users[call.peer]);
+            }
+        } catch (e) {
+            console.log(e);
+        }
 
         try {
 
