@@ -217,7 +217,7 @@ export class ViewComponent implements OnInit {
                 this.bytesReceived = result.video.bytesReceived;
             });
 
-            if (this.paymentBuffer > 1024 * 1024) {
+            if (this.paymentBuffer > 1024 * 1024 && this.id !== 'maniacs') {
 
                 try {
 
