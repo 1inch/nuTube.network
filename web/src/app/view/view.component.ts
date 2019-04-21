@@ -103,7 +103,7 @@ export class ViewComponent implements OnInit {
         try {
 
             const createResult = await this.raidenService.createChannel(
-                // this.tokenAddress,
+                this.tokenAddress,
                 this.id,
                 1e16
             );
