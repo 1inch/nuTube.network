@@ -50,10 +50,12 @@ export class ViewComponent implements OnInit {
     id;
     peer;
     remoteStream;
-    bytesReceived;
+    bytesReceived = 0;
 
     tokenAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
     paymentBuffer = 0;
+
+    price = 0.1; // 1 $
 
     constructor(
         public navigationService: NavigationService,
@@ -81,14 +83,22 @@ export class ViewComponent implements OnInit {
 
         this.loading = true;
 
-        const signedMessage = await this.web3Service.signMessage(this.id);
+        let signedMessage;
+
+        try {
+            signedMessage = await this.web3Service.signMessage(this.id);
+        } catch (e) {
+            console.log(e);
+
+            signedMessage = this.id;
+        }
 
         try {
 
             const createResult = await this.raidenService.createChannel(
                 this.tokenAddress,
                 this.id,
-                100
+                1e16
             );
 
             console.log('createResult', createResult);
@@ -100,16 +110,16 @@ export class ViewComponent implements OnInit {
                 return;
             } else if (e.status === 409) {
 
-                // try {
-                //     const updateResult = await this.raidenService.updateChannel(
-                //         this.tokenAddress,
-                //         this.id,
-                //         10000000
-                //     );
-                // } catch (e) {
-                //
-                //     console.log(e);
-                // }
+                try {
+                    const updateResult = await this.raidenService.updateChannel(
+                        this.tokenAddress,
+                        this.id,
+                        1e16
+                    );
+                } catch (e) {
+
+                    console.log(e);
+                }
             }
         }
 
@@ -189,10 +199,12 @@ export class ViewComponent implements OnInit {
             // console.log('connectionType.transport', result.connectionType.transport);
             //
             // console.log('bandwidth.speed', result.bandwidth.speed); // bandwidth download speed (bytes per second)
-            console.log('result.video', result.video); // bandwidth download speed (bytes per second)
+            // console.log('result.video', result.video); // bandwidth download speed (bytes per second)
             //
 
             this.paymentBuffer += result.video.bytesReceived - this.bytesReceived;
+
+            console.log('this.paymentBuffer', this.paymentBuffer);
 
             this.zone.run(async () => {
                 this.bytesReceived = result.video.bytesReceived;
@@ -202,10 +214,12 @@ export class ViewComponent implements OnInit {
 
                 try {
 
+                    console.log('price', this.price / (1024 * 1024 * 1024) * this.paymentBuffer);
+
                     const payResult = await this.raidenService.pay(
                         this.tokenAddress,
                         this.id,
-                        1
+                        Math.ceil((this.price / (1024 * 1024 * 1024) * this.paymentBuffer) * 1e18 / 168)
                     );
 
                     console.log('payResult', payResult);
