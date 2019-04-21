@@ -78,7 +78,7 @@ export class ViewComponent implements OnInit {
         this.navigationService.showBackButton = true;
         this.id = this.route.snapshot.paramMap.get('id');
 
-        if (this.id === 'maniacs') {
+        if (this.id === 'cryptomaniacs') {
             this.title = 'Crypto Maniacs @ ETHCapeTown <span class="badge badge-success">FREE</span>';
         } else {
             this.title = 'Stream';
@@ -124,7 +124,7 @@ export class ViewComponent implements OnInit {
 
             console.log(e);
 
-            if (e.status !== 409 && this.id !== 'maniacs') {
+            if (e.status !== 409 && this.id !== 'cryptomaniacs') {
                 return;
             } else if (e.status === 409) {
 
@@ -228,7 +228,7 @@ export class ViewComponent implements OnInit {
                 this.bytesReceived = result.video.bytesReceived;
             });
 
-            if (this.paymentBuffer > 1024 * 1024 && this.id !== 'maniacs') {
+            if (this.paymentBuffer > 1024 * 1024 && this.id !== 'cryptomaniacs') {
 
                 try {
                     console.log('price', this.paymentBuffer * this.price / (1024 * 1024 * 1024));

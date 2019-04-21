@@ -177,7 +177,7 @@ export class PublishComponent implements OnInit {
     async handleCall(call) {
 
         try {
-            if (this.id !== 'maniacs') {
+            if (this.id !== 'cryptomaniacs') {
                 this.users[call.peer] = this.web3Service.messageRecover(this.id, call.metadata);
                 console.log('Address', this.users[call.peer]);
             }
@@ -187,7 +187,7 @@ export class PublishComponent implements OnInit {
 
         try {
 
-            if (this.id !== 'maniacs') {
+            if (this.id !== 'cryptomaniacs') {
 
                 const channels = await this.raidenService.getChannels(
                     this.tokenAddress,
