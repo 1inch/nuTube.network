@@ -55,6 +55,7 @@ export class ViewComponent implements OnInit {
 
     tokenAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
     paymentBuffer = 0;
+    username;
 
     price = 0.1; // 1 $
 
@@ -72,7 +73,7 @@ export class ViewComponent implements OnInit {
         this.videoPlayer = el.nativeElement;
     }
 
-    ngOnInit() {
+    async ngOnInit() {
 
         this.navigationService.showBackButton = true;
         this.id = this.route.snapshot.paramMap.get('id');
@@ -81,6 +82,16 @@ export class ViewComponent implements OnInit {
             this.title = 'Crypto Maniacs @ ETHCapeTown <span class="badge badge-success">FREE</span>';
         } else {
             this.title = 'Stream';
+
+            try {
+                this.username = await this.web3Service.provider.lookupAddress(this.id);
+            } catch (e) {
+                console.log(e);
+            }
+
+            if (!this.username) {
+                this.username = this.id + ' (ENS not set)';
+            }
         }
 
         this.connect();

@@ -9,6 +9,7 @@
     </video>
     <div [hidden]="!receiving && loading || (this.id === 'maniacs')" class="text-center">
         <hr>
+        <h4 style="white-space: normal;">ENS: {{username}}</h4>
         <h4>Price: {{price}}$ / GB</h4>
         <h4>Received: {{ (bytesReceived / 1024 / 1024).toFixed(2) }} MB</h4>
         <h4>Costs: {{ (price / (1024 * 1024 * 1024) *  bytesReceived).toFixed(8) }} $</h4>
