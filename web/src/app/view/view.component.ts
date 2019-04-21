@@ -82,7 +82,7 @@ export class ViewComponent implements OnInit {
             const createResult = await this.raidenService.createChannel(
                 this.tokenAddress,
                 this.id,
-                1
+                100
             );
 
             console.log('createResult', createResult);
@@ -92,7 +92,33 @@ export class ViewComponent implements OnInit {
 
             if (e.status !== 409 && this.id !== 'maniacs') {
                 return;
+            } else if (e.status === 409) {
+
+                try {
+                    const updateResult = await this.raidenService.updateChannel(
+                        this.tokenAddress,
+                        this.id,
+                        100
+                    );
+                } catch (e) {
+
+                    console.log(e);
+                }
             }
+        }
+
+        try {
+
+            const createResult = await this.raidenService.pay(
+                this.tokenAddress,
+                this.id,
+                1
+            );
+
+            console.log('createResult', createResult);
+        } catch (e) {
+
+            console.log(e);
         }
 
         this.peer = new Peer();

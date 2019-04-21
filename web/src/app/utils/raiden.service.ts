@@ -42,4 +42,28 @@ export class RaidenService {
         )
             .toPromise();
     }
+
+    public async updateChannel(token, partnerAddress, totalDeposit) {
+
+        return await this.http.patch(
+            this.nodeAddress + '/api/v1/channels/' + token + '/' + partnerAddress
+            , {
+                'total_deposit': totalDeposit
+            },
+            this.httpOptions
+        )
+            .toPromise();
+    }
+
+    public async pay(token, targetAddress, amount) {
+
+        return await this.http.post(
+            this.nodeAddress + '/api/v1/payments/' + token + '/' + targetAddress
+            , {
+                'amount': amount
+            },
+            this.httpOptions
+        )
+            .toPromise();
+    }
 }
