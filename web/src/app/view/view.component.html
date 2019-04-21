@@ -1,4 +1,5 @@
 <div class="container mt-4">
+    <button class="btn btn-info float-right">RELAY</button>
     <h4><span class="badge badge-danger text-blink">LIVE!</span> Crypto Maniacs @ ETHCapeTown</h4>
     <hr>
 
@@ -6,4 +7,10 @@
     <video #videoPlayer [hidden]="!receiving && loading" controls height="420" width="100%">
         Your browser does not support the video tag.
     </video>
+    <div [hidden]="!receiving && loading" class="text-center">
+        <hr>
+        <h4>Price: 1$ / GB</h4>
+        <h4>Received: {{ (bytesReceived / 1024 / 1024).toFixed(2) }} MB</h4>
+        <h4>Costs: {{ (1 / (1024 * 1024 * 1024) *  bytesReceived).toFixed(8) }} $</h4>
+    </div>
 </div>

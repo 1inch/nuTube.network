@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, NgZone, OnInit, ViewChild} from '@angular/core';
 import {NavigationService} from '../base/navigation.service';
 import {ActivatedRoute} from '@angular/router';
 import Peer from 'peerjs';
@@ -6,6 +6,9 @@ import {Web3Service} from '../utils/web3.service';
 import {RaidenService} from '../utils/raiden.service';
 
 declare const window: any;
+declare const require: any;
+
+const getStats = require('getstats');
 
 export const createEmptyAudioTrack = () => {
 
@@ -47,14 +50,17 @@ export class ViewComponent implements OnInit {
     id;
     peer;
     remoteStream;
+    bytesReceived;
 
     tokenAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
+    paymentBuffer = 0;
 
     constructor(
         public navigationService: NavigationService,
         private route: ActivatedRoute,
         private web3Service: Web3Service,
-        private raidenService: RaidenService
+        private raidenService: RaidenService,
+        private zone: NgZone
     ) {
     }
 
@@ -98,7 +104,7 @@ export class ViewComponent implements OnInit {
                     const updateResult = await this.raidenService.updateChannel(
                         this.tokenAddress,
                         this.id,
-                        100
+                        10000000
                     );
                 } catch (e) {
 
@@ -146,6 +152,8 @@ export class ViewComponent implements OnInit {
 
         console.log('call', call);
 
+        this.initStatus(call.peer, call.peerConnection);
+
         call.on('stream', (remoteStream) => {
 
             console.log('remoteStream', remoteStream);
@@ -166,5 +174,67 @@ export class ViewComponent implements OnInit {
 
             window.location.reload();
         });
+    }
+
+    async initStatus(user, peerConnection) {
+
+        const repeatInterval = 2000; // 2000 ms == 2 seconds
+
+        // console.log('Peer', peerConnection);
+
+        getStats(peerConnection, async (result) => {
+
+            // console.log('remote.ipAddress', result.connectionType.remote.ipAddress);
+            // console.log('remote.candidateType', result.connectionType.remote.candidateType);
+            // console.log('connectionType.transport', result.connectionType.transport);
+            //
+            // console.log('bandwidth.speed', result.bandwidth.speed); // bandwidth download speed (bytes per second)
+            console.log('result.video', result.video); // bandwidth download speed (bytes per second)
+            //
+
+            this.paymentBuffer += result.video.bytesReceived - this.bytesReceived;
+
+            this.zone.run(async () => {
+                this.bytesReceived = result.video.bytesReceived;
+            });
+
+            if (this.paymentBuffer > 1024 * 1024) {
+
+                try {
+
+                    const payResult = await this.raidenService.pay(
+                        this.tokenAddress,
+                        this.id,
+                        1
+                    );
+
+                    console.log('payResult', payResult);
+                    this.paymentBuffer = 0;
+                } catch (e) {
+
+                    console.log(e);
+                }
+            }
+
+            // to access native "results" array
+            // result.results.forEach(function (item) {
+            //
+            //     console.log('item', item);
+            //
+            //     if (item.type === 'ssrc' && item.transportId === 'Channel-audio-1') {
+            //         const packetsLost = item.packetsLost;
+            //         const packetsSent = item.packetsSent;
+            //         const audioInputLevel = item.audioInputLevel;
+            //         const trackId = item.googTrackId; // media stream track id
+            //         const isAudio = item.mediaType === 'audio'; // audio or video
+            //         const isSending = item.id.indexOf('_send') !== -1; // sender or receiver
+            //
+            //         console.log('SendRecv type', item.id.split('_send').pop());
+            //         console.log('MediaStream track type', item.mediaType);
+            //
+            //         console.log('packetsSent', packetsSent);
+            //     }
+            // });
+        }, repeatInterval);
     }
 }
