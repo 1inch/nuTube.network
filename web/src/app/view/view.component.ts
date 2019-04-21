@@ -105,7 +105,7 @@ export class ViewComponent implements OnInit {
             const createResult = await this.raidenService.createChannel(
                 this.tokenAddress,
                 this.id,
-                1e16
+                3973001667504607
             );
 
             console.log('createResult', createResult);
@@ -121,7 +121,7 @@ export class ViewComponent implements OnInit {
                 //     const updateResult = await this.raidenService.updateChannel(
                 //         this.tokenAddress,
                 //         this.id,
-                //         1e16
+                //         3973001667504607
                 //     );
                 // } catch (e) {
                 //
@@ -220,21 +220,21 @@ export class ViewComponent implements OnInit {
             if (this.paymentBuffer > 1024 * 1024 && this.id !== 'maniacs') {
 
                 try {
-
-                    console.log('price', this.price / (1024 * 1024 * 1024) * this.paymentBuffer);
+                    console.log('price', this.paymentBuffer * this.price / (1024 * 1024 * 1024));
 
                     const payResult = await this.raidenService.pay(
                         this.tokenAddress,
                         this.id,
-                        Math.ceil((this.price / (1024 * 1024 * 1024) * this.paymentBuffer) * 1e18 / 168)
+                        Math.ceil((this.paymentBuffer * this.price * 1e18 / (1024 * 1024 * 1024)) / 168)
                     );
 
                     console.log('payResult', payResult);
-                    this.paymentBuffer = 0;
                 } catch (e) {
 
                     console.log(e);
                 }
+
+                this.paymentBuffer = 0;
             }
 
             // to access native "results" array

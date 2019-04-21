@@ -7,7 +7,7 @@
     <video #videoPlayer [hidden]="!receiving && loading" controls height="420" width="100%">
         Your browser does not support the video tag.
     </video>
-    <div [hidden]="!receiving && loading" class="text-center">
+    <div [hidden]="!receiving && loading || (this.id === 'maniacs')" class="text-center">
         <hr>
         <h4>Price: {{price}}$ / GB</h4>
         <h4>Received: {{ (bytesReceived / 1024 / 1024).toFixed(2) }} MB</h4>
