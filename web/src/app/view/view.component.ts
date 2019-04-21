@@ -44,6 +44,7 @@ export const createEmptyVideoTrack = ({width, height}) => {
 })
 export class ViewComponent implements OnInit {
 
+    title = '';
     loading = false;
     receiving = false;
     videoPlayer: HTMLVideoElement;
@@ -76,6 +77,12 @@ export class ViewComponent implements OnInit {
         this.navigationService.showBackButton = true;
         this.id = this.route.snapshot.paramMap.get('id');
 
+        if (this.id === 'maniacs') {
+            this.title = 'Crypto Maniacs @ ETHCapeTown <span class="badge badge-success">FREE</span>';
+        } else {
+            this.title = 'Stream';
+        }
+
         this.connect();
     }
 
@@ -96,7 +103,7 @@ export class ViewComponent implements OnInit {
         try {
 
             const createResult = await this.raidenService.createChannel(
-                this.tokenAddress,
+                // this.tokenAddress,
                 this.id,
                 1e16
             );
@@ -110,16 +117,16 @@ export class ViewComponent implements OnInit {
                 return;
             } else if (e.status === 409) {
 
-                try {
-                    const updateResult = await this.raidenService.updateChannel(
-                        this.tokenAddress,
-                        this.id,
-                        1e16
-                    );
-                } catch (e) {
-
-                    console.log(e);
-                }
+                // try {
+                //     const updateResult = await this.raidenService.updateChannel(
+                //         this.tokenAddress,
+                //         this.id,
+                //         1e16
+                //     );
+                // } catch (e) {
+                //
+                //     console.log(e);
+                // }
             }
         }
 

@@ -1,6 +1,6 @@
 <div class="container mt-4">
     <button class="btn btn-info float-right">RELAY</button>
-    <h4><span class="badge badge-danger text-blink">LIVE!</span> Crypto Maniacs @ ETHCapeTown</h4>
+    <h4><span class="badge badge-danger text-blink">LIVE!</span>&nbsp;<span [innerHTML]="title"></span></h4>
     <hr>
 
     <app-loading-spinner [hidden]="receiving && !loading"></app-loading-spinner>
