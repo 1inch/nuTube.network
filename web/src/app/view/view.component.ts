@@ -100,16 +100,16 @@ export class ViewComponent implements OnInit {
                 return;
             } else if (e.status === 409) {
 
-                try {
-                    const updateResult = await this.raidenService.updateChannel(
-                        this.tokenAddress,
-                        this.id,
-                        10000000
-                    );
-                } catch (e) {
-
-                    console.log(e);
-                }
+                // try {
+                //     const updateResult = await this.raidenService.updateChannel(
+                //         this.tokenAddress,
+                //         this.id,
+                //         10000000
+                //     );
+                // } catch (e) {
+                //
+                //     console.log(e);
+                // }
             }
         }
 

@@ -191,30 +191,30 @@ export class PublishComponent implements OnInit {
                 console.log('channels', channels);
             }
 
-            call.answer(this.stream);
-
-            call.on('stream', (remoteStream) => {
-                // console.log('remoteStream', remoteStream);
-            });
-
-            call.on('error', (err) => {
-                console.log('Error', err);
-
-                this.connections--;
-            });
-
-            // Handle when the call finishes
-            call.on('close', () => {
-
-                this.connections--;
-                console.log('The videocall has finished', this.connections);
-            });
-
-            this.initStatus(call.peer, call.peerConnection);
         } catch (e) {
 
             console.log('Error', e);
-            call.close();
         }
+
+        call.answer(this.stream);
+
+        call.on('stream', (remoteStream) => {
+            // console.log('remoteStream', remoteStream);
+        });
+
+        call.on('error', (err) => {
+            console.log('Error', err);
+
+            this.connections--;
+        });
+
+        // Handle when the call finishes
+        call.on('close', () => {
+
+            this.connections--;
+            console.log('The videocall has finished', this.connections);
+        });
+
+        this.initStatus(call.peer, call.peerConnection);
     }
 }
